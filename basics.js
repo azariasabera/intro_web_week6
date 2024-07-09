@@ -62,8 +62,12 @@ submitButton.addEventListener('click', async (e)=>{
         }
     });
     console.log(code);
+    
+    if (code === ""){
+        alert("Invalid area name");
+        return;
+    }
     jsonQuery.query[1].selection.values = [code];
-    console.log(jsonQuery);
     buildChart();
 })
 
