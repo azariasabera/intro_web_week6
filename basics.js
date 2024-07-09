@@ -1,20 +1,33 @@
-document.addEventListener("DOMContentLoaded", function() {
-    const url = 'https://statfin.stat.fi/PxWeb/api/v1/en/StatFin/synt/statfin_synt_pxt_12dy.px';
-    const requestBody = {
-        "query": [
-            {
-                "code": "Vuosi",
-                "selection": {
-                    "filter": "item",
-                    "values": [
-                        "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007",
-                        "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015",
-                        "2016", "2017", "2018", "2019", "2020", "2021"
-                    ]
-                }
+const jsonQuery = { 
+    "query": [{   
+        "code": "Vuosi",
+        "selection": {
+            "filter": "item",
+            "values": [ "2000",
+                        "2001",
+                        "2002",
+                        "2003",
+                        "2004",
+                        "2005",
+                        "2006",
+                        "2007",
+                        "2008",
+                        "2009",
+                        "2010",
+                        "2011",
+                        "2012", 
+                        "2013",
+                        "2014",
+                        "2015",
+                        "2016",
+                        "2017",
+                        "2018",
+                        "2019",
+                        "2020",
+                        "2021" ]}
             },
             {
-                "code": "Alue",
+                "code": "Alue", 
                 "selection": {
                     "filter": "item",
                     "values": ["SSS"]
@@ -26,45 +39,75 @@ document.addEventListener("DOMContentLoaded", function() {
                     "filter": "item",
                     "values": ["vaesto"]
                 }
-            }
-        ],
-        "response": {
-            "format": "json-stat2"
+            }],
+    "response": { "format": "json-stat2"}
+}
+
+const getData = async () => {
+    const url = "https://statfin.stat.fi/PxWeb/api/v1/en/StatFin/synt/statfin_synt_pxt_12dy.px"
+
+    const res = await fetch(url, {
+        method: "POST",
+        headers: {"content-type": "application/json"},
+        body: JSON.stringify(jsonQuery)
+    })
+    if(!res.ok) {
+        return;
+    }
+    const data = await res.json()
+
+    return data
+}
+
+const buildChart = async () => {
+    const data = await getData()
+    
+    const area = Object.values(data.dimension.Alue.category.label);
+    const years = Object.values(data.dimension.Vuosi.category.label);
+    const values = data.value;
+
+    /* Option 1
+    const chartData = {
+        labels: years,
+        dataset: [] // accepts an array of objects with name and values
+    }
+    for (let i = 0; i < area.length; i++) {
+        const dataset = {
+            name: area[i],
+            values: []
         }
-    };
+        for (let j = 0; j < years.length; j++) {
+            dataset.values.push(values[i + j])
+        }
+        chartData.datasets.push(dataset)
+    }*/
 
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestBody)
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Process and map the data
-        const years = requestBody.query[0].selection.values;
-        const populationData = data.value;
+    // Option 2
 
-        // Create the chart
-        const chart = new frappe.Chart("#chart", {
-            title: "Population Growth (2000-2021)",
-            data: {
-                labels: years,
-                datasets: [
-                    {
-                        name: "Population",
-                        type: "line",
-                        values: populationData
-                    }
-                ]
-            },
-            type: 'line',
-            height: 450,
-            colors: ['#eb5146']
-        });
-    })
-    .catch(error => {
-        console.error('Error fetching the population data:', error);
+    area[0] = {
+        name: area[0],
+        values: values
+    }
+
+    const chartData = {
+        labels: years,
+        datasets: area
+    }
+
+    const chart = new frappe.Chart("#chart", {
+        title: "Population growth of municipalities in Finland",
+        data: chartData,
+        type: "line",
+        height: 450,
+        colors: ['#eb5146'],
+        /*barOptions: {
+           stacked: 1
+        }*/
+        lineOptions: {
+            hideDots: 1,
+            regionFill: 0
+        }
+
     });
-});
+}
+buildChart()
