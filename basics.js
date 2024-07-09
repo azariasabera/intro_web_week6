@@ -66,12 +66,18 @@ const buildChart = async () => {
     const years = Object.values(data.dimension.Vuosi.category.label);
     const values = data.value;
 
+    area[0] = {
+        "name": area[0],
+        "values": values
+    }
+
     // make chart data
     const chartData = {
         labels: years,
-        datasets: []
+        datasets: area // accepts an array of objects with name and values
     }
-    for (let i = 0; i < area.length; i++) {
+    
+    /* for (let i = 0; i < area.length; i++) {
         const dataset = {
             name: area[i],
             values: []
@@ -81,13 +87,13 @@ const buildChart = async () => {
         }
         chartData.datasets.push(dataset)
     }
-
+ */
     const chart = new frappe.Chart("#chart", {
-        title: "Finnish parliamentary elections",
+        title: "Population growth of municipalities in Finland",
         data: chartData,
-        type: "bar",
-        height: 400,
-        //colors: ['#f54b4b', '#ffde55', '#006288', '#349a2b', '#61bf1a', '#f00a64', '#ffdd93', '#0135a5'],
+        type: "line",
+        height: 450,
+        colors: ['#eb5146'],
         /*barOptions: {
            stacked: 1
         }
