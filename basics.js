@@ -51,9 +51,9 @@ submitButton.addEventListener('click', async (e)=>{
     const url = "https://statfin.stat.fi/PxWeb/api/v1/en/StatFin/synt/statfin_synt_pxt_12dy.px"
     const res = await fetch(url);
     const data = await res.json();
+    console.log(data)
     let name = inputArea.value.toLowerCase();
     name = name.slice(0, 1).toUpperCase() + name.slice(1);
-    console.log(name)
     let code = "";
     console.log(data.variables[1].valueTexts)
     data.variables[1].valueTexts.forEach((element, index) => {
@@ -62,7 +62,7 @@ submitButton.addEventListener('click', async (e)=>{
         }
     });
     console.log(code);
-    
+
     if (code === ""){
         alert("Invalid area name");
         return;
