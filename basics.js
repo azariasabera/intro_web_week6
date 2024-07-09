@@ -1,3 +1,6 @@
+const inputArea = document.getElementById('input-area');
+const submitButton = document.getElementById('submit-data');
+
 const jsonQuery = { 
     "query": [{   
         "code": "Vuosi",
@@ -43,6 +46,28 @@ const jsonQuery = {
     "response": { "format": "json-stat2"}
 }
 
+submitButton.addEventListener('click', async (e)=>{
+    e.preventDefault();
+    const url = "https://statfin.stat.fi/PxWeb/api/v1/en/StatFin/synt/statfin_synt_pxt_12dy.px"
+    const res = await fetch(url);
+    const data = await res.json();
+    let name = inputArea.value.toLowerCase();
+    name = name.slice(0, 1).toUpperCase() + name.slice(1);
+    console.log(name)
+    let code = "";
+    console.log(data.variables[1].valueTexts)
+    data.variables[1].valueTexts.forEach((element, index) => {
+        if(element === name){
+            code = data.variables[1].values[index];
+        }
+    });
+    console.log(code);
+    jsonQuery.query[1].selection.values = [code];
+    console.log(jsonQuery);
+    buildChart();
+})
+
+
 const getData = async () => {
     const url = "https://statfin.stat.fi/PxWeb/api/v1/en/StatFin/synt/statfin_synt_pxt_12dy.px"
 
@@ -66,7 +91,8 @@ const buildChart = async () => {
     const years = Object.values(data.dimension.Vuosi.category.label);
     const values = data.value;
 
-    /* Option 1
+    /* 
+    // Option 1
     const chartData = {
         labels: years,
         dataset: [] // accepts an array of objects with name and values
@@ -80,10 +106,10 @@ const buildChart = async () => {
             dataset.values.push(values[i + j])
         }
         chartData.datasets.push(dataset)
-    }*/
+    }
+    */
 
     // Option 2
-
     area[0] = {
         name: area[0],
         values: values
@@ -95,7 +121,7 @@ const buildChart = async () => {
     }
 
     const chart = new frappe.Chart("#chart", {
-        title: "Population growth of municipalities in Finland",
+        title: "Population growth in Finland 2000-2021",
         data: chartData,
         type: "line",
         height: 450,
