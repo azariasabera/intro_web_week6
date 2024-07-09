@@ -24,23 +24,22 @@ const jsonQuery = {
                         "2018",
                         "2019",
                         "2020",
-                        "2021"
-        ]}
-    },
-    {
-        "code": "Alue", 
-        "selection": {
-            "filter": "item",
-            "values": ["SSS"]
-        }
-    },
-    {
-        "code": "Tiedot",
-        "selection": {
-            "filter": "item",
-            "values": ["vaesto"]
-        }
-    }],
+                        "2021" ]}
+            },
+            {
+                "code": "Alue", 
+                "selection": {
+                    "filter": "item",
+                    "values": ["SSS"]
+                }
+            },
+            {
+                "code": "Tiedot",
+                "selection": {
+                    "filter": "item",
+                    "values": ["vaesto"]
+                }
+            }],
     "response": { "format": "json-stat2"}
 }
 
@@ -62,52 +61,41 @@ const getData = async () => {
 
 const buildChart = async () => {
     const data = await getData()
-    console.log(data)}
-/* 
-    const parties = Object.values(data.dimension.Puolue.category.label);
-    const labels = Object.values(data.dimension.Vuosi.category.label);
-    const values = data.value;
     
-    //console.log(parties)
-    //console.log(labels)
-    //console.log(values)
+    const area = Object.values(data.dimension.Alue.category.label);
+    const years = Object.values(data.dimension.Vuosi.category.label);
+    const values = data.value;
 
-    parties.forEach((party, index) => {
-        let partySupport = []
-        for(let i = 0; i < 10; i++) {
-            partySupport.push(values[i * 8 + index])
-        }
-        parties[index] = {
-            name: party,
-            values: partySupport.reverse()
-        }
-    })
-
-    //console.log(parties)
-
+    // make chart data
     const chartData = {
-        labels: labels,
-        datasets: parties
+        labels: years,
+        datasets: []
+    }
+    for (let i = 0; i < area.length; i++) {
+        const dataset = {
+            name: area[i],
+            values: []
+        }
+        for (let j = 0; j < years.length; j++) {
+            dataset.values.push(values[i + j])
+        }
+        chartData.datasets.push(dataset)
     }
 
     const chart = new frappe.Chart("#chart", {
         title: "Finnish parliamentary elections",
         data: chartData,
-        type: "line",
+        type: "bar",
         height: 400,
-        colors: ['#f54b4b', '#ffde55', '#006288', '#349a2b', '#61bf1a', '#f00a64', '#ffdd93', '#0135a5'],
-        //barOptions: {
-        //    stacked: 1
-        //}
+        //colors: ['#f54b4b', '#ffde55', '#006288', '#349a2b', '#61bf1a', '#f00a64', '#ffdd93', '#0135a5'],
+        /*barOptions: {
+           stacked: 1
+        }
         lineOptions: {
             hideDots: 1,
             regionFill: 0
-        }
+        }*/
 
-    })
-
-
-
+    });
 }
- */
 buildChart()
