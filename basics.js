@@ -1,5 +1,6 @@
 const inputArea = document.getElementById('input-area');
-const submitButton = document.getElementById('submit-data');
+const searchButton = document.getElementById('submit-data');
+const addButton = document.getElementById('add-data');
 
 const jsonQuery = { 
     "query": [{   
@@ -46,7 +47,7 @@ const jsonQuery = {
     "response": { "format": "json-stat2"}
 }
 
-submitButton.addEventListener('click', async (e)=>{
+searchButton.addEventListener('click', async (e)=>{
     e.preventDefault();
     const url = "https://statfin.stat.fi/PxWeb/api/v1/en/StatFin/synt/statfin_synt_pxt_12dy.px"
     const res = await fetch(url);
@@ -125,7 +126,7 @@ const buildChart = async () => {
     }
 
     const chart = new frappe.Chart("#chart", {
-        title: "Population growth in Finland 2000-2021",
+        title: "Population growth in whole country",
         data: chartData,
         type: "line",
         height: 450,
@@ -141,3 +142,45 @@ const buildChart = async () => {
     });
 }
 buildChart()
+
+
+/*
+Let’s add some data predictions to the population chart. Add a button with the id of “add-data”. This button should add a data point to the chart using the following formula: 
+Calculate the mean value of the delta of every data point 
+Add the mean value to the last data point. 
+For example, with the values of [5, 2, 4, -1] the next data point would be: ((2−5)+(4−2)+((−1)−4))/3+(−1)=(2−3−5)/3−1=(−6)/3−1=−3
+ => [5, 2, 4, -1, -3]
+*/
+addButton.addEventListener('click', async (e)=>{
+    e.preventDefault();
+    const data = await getData();
+    const values = data.value;
+    const mean = values.reduce((acc, curr, index, array) => {
+        if(index === 0) {
+            return 0;
+        }
+        return acc + (curr - array[index - 1]);
+    }, 0) / (values.length - 1);
+    values.push(values[values.length - 1] + mean);
+    const area = Object.values(data.dimension.Alue.category.label);
+    const years = Object.values(data.dimension.Vuosi.category.label);
+    area[0] = {
+        name: area[0],
+        values: values
+    }
+    const chartData = {
+        labels: years,
+        datasets: area
+    }
+    const chart = new frappe.Chart("#chart", {
+        title: "Population growth in whole country",
+        data: chartData,
+        type: "line",
+        height: 450,
+        colors: ['#eb5146'],
+        lineOptions: {
+            hideDots: 0,
+            regionFill: 0
+        }
+    });
+});
