@@ -56,7 +56,8 @@ document.addEventListener("DOMContentLoaded", () => {
             title: "Births and Deaths in Municipality",
             data: chartData,
             type: 'bar',
-            height: 450
+            height: 450,
+            colors: ['#63d0ff', '#363636']
         });
     }
 
