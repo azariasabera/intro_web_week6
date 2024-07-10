@@ -155,32 +155,47 @@ addButton.addEventListener('click', async (e)=>{
     e.preventDefault();
     const data = await getData();
     const values = data.value;
-    const mean = values.reduce((acc, curr, index, array) => {
-        if(index === 0) {
-            return 0;
-        }
-        return acc + (curr - array[index - 1]);
-    }, 0) / (values.length - 1);
-    values.push(values[values.length - 1] + mean);
-    const area = Object.values(data.dimension.Alue.category.label);
     const years = Object.values(data.dimension.Vuosi.category.label);
+    const area = Object.values(data.dimension.Alue.category.label);
+    
+    let deltas = []; // storing the differences between a value and its predecessor
+    for (let i = 1; i < values.length; i++) {
+        deltas.push(values[i] - values[i - 1]);
+    }
+
+    let sum = 0;
+    deltas.forEach(delta => sum += delta);
+
+    const mean = sum / deltas.length;
+    const newValue = values[values.length - 1] + mean;
+    const newYear = parseInt(years[years.length - 1]) + 1;
+
+    values.push(newValue);
+    years.push(newYear.toString());
+
     area[0] = {
         name: area[0],
         values: values
     }
+
     const chartData = {
         labels: years,
         datasets: area
     }
+
     const chart = new frappe.Chart("#chart", {
         title: "Population growth in whole country",
         data: chartData,
         type: "line",
         height: 450,
         colors: ['#eb5146'],
+        /*barOptions: {
+           stacked: 1
+        }*/
         lineOptions: {
             hideDots: 0,
             regionFill: 0
         }
+
     });
 });
