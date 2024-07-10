@@ -16,7 +16,7 @@
 
     <script>
         document.getElementById('navigation').addEventListener('click', () => {
-            window.location.href = '/';
+            window.location.href = '/'; // or window.location.href = 'index.html';
         });
 
         const jsonQuery = { 
@@ -83,7 +83,7 @@
         const buildChart = async () => {
 
             const data = await getData()
-            //console.log(data)
+            console.log(data)
             const labels = Object.values(data.dimension.Vuosi.category.label);
 
             const birthValues = [];
