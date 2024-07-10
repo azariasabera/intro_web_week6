@@ -1,6 +1,7 @@
 const inputArea = document.getElementById('input-area');
 const searchButton = document.getElementById('submit-data');
 const addButton = document.getElementById('add-data');
+const navigateButton = document.getElementById('navigation');
 
 const jsonQuery = { 
     "query": [{   
@@ -52,17 +53,24 @@ searchButton.addEventListener('click', async (e)=>{
     const url = "https://statfin.stat.fi/PxWeb/api/v1/en/StatFin/synt/statfin_synt_pxt_12dy.px"
     const res = await fetch(url);
     const data = await res.json();
-    console.log(data)
+    //console.log(data)
     let name = inputArea.value.toLowerCase();
     name = name.slice(0, 1).toUpperCase() + name.slice(1);
     let code = "";
     //console.log(data.variables[1].valueTexts)
-    data.variables[1].valueTexts.forEach((element, index) => {
-        if(element === name){
-            code = data.variables[1].values[index];
-        }
-    });
-    //console.log(code);
+    if (name === "Whole country")
+        code = "SSS";
+    else{
+        data.variables[1].valueTexts.forEach((element, index) => {
+            if(element === name){
+                code = data.variables[1].values[index];
+            }
+        });
+        // or simply
+        // if (data.variables[1].valueTexts.includes(name)) {
+        //     code = data.variables[1].values[data.variables[1].valueTexts.indexOf(name)];
+        // }
+    }
 
     if (code === ""){
         alert("Invalid area name");
@@ -143,14 +151,6 @@ const buildChart = async () => {
 }
 buildChart()
 
-
-/*
-Let’s add some data predictions to the population chart. Add a button with the id of “add-data”. This button should add a data point to the chart using the following formula: 
-Calculate the mean value of the delta of every data point 
-Add the mean value to the last data point. 
-For example, with the values of [5, 2, 4, -1] the next data point would be: ((2−5)+(4−2)+((−1)−4))/3+(−1)=(2−3−5)/3−1=(−6)/3−1=−3
- => [5, 2, 4, -1, -3]
-*/
 addButton.addEventListener('click', async (e)=>{
     e.preventDefault();
     const data = await getData();
@@ -198,4 +198,9 @@ addButton.addEventListener('click', async (e)=>{
         }
 
     });
+});
+
+navigateButton.addEventListener('click', async (e)=>{
+    e.preventDefault();
+    window.location.href = "/newchart.html";
 });

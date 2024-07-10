@@ -8,19 +8,24 @@
     <script src="https://cdn.jsdelivr.net/npm/frappe-charts@latest"></script>
 </head>
 <body>
-    <div id="chart"></div>
     <form action="" method="post">
+        <label for="municipality">Enter municipality </label>
         <input type="text" name="municipality" id="input-area">
         <button 
                 id="submit-data" style="width: 80px; 
-                height: 20px; background-color: rgb(235, 116, 135); border-radius: 20px;">
+                height: 20px; background-color: rgb(162, 248, 58); border-radius: 20px;">
             Search
         </button>
     </form>
+    <div id="chart"></div>
     <br><br>
-    <button id="add-data" style="width: 80px; 
-            height: 20px; background-color: rgb(25, 195, 195); border-radius: 20px;">
-        Add
+    <button id="add-data" style="height: 20px; background-color: rgb(25, 195, 195); 
+            border-radius: 20px; margin-right: 20px;">
+        View estimative data
+    </button>
+    <button id="navigation" style="height: 20px; background-color: rgb(237, 166, 22); 
+            border-radius: 20px;">
+        View birth and death charts
     </button>
 </body>
 </html>
