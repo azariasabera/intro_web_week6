@@ -24,9 +24,7 @@
                 "code": "Vuosi",
                 "selection": {
                     "filter": "item",
-                    "values": [ "2000",
-                                "2001"
-                            ]}
+                    "values": [ "2000"]}
                     },
                     {
                         "code": "Alue", 
@@ -77,6 +75,8 @@
                     deathValues.push(item)
                 }
             })
+
+            console.log(birthValues, deathValues)
 
             const chartData = {
                 labels: labels,
